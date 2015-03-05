@@ -1,0 +1,7 @@
+## Interface: 60100
+## Title: Pimp My Selfie
+## Notes: Small tweaks to make your S.E.L.F.I.E.s more awesome!
+## Author: Ethan Centaurai
+## Version: @project-version@
+
+PimpMySelfie.lua
