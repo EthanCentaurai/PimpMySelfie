@@ -7,7 +7,11 @@ local _G = _G
 
 local ActionStatus = _G.ActionStatus
 local CreateFrame = _G.CreateFrame
+local GetCVar = _G.GetCVar
+local SetCVar = _G.SetCVar
 local UnitBuff = _G.UnitBuff
+
+local pairs = _G.pairs
 
 
 --<< ================================================= >>--
@@ -15,6 +19,33 @@ local UnitBuff = _G.UnitBuff
 --<< ================================================= >>--
 
 local isTakingSelfie = false
+
+local cVars = {
+	-- player name
+	["UnitNameOwn"] = GetCVar("UnitNameOwn"),
+
+	-- npc names
+	["UnitNameFriendlySpecialNPCName"] = GetCVar("UnitNameFriendlySpecialNPCName"),
+	["UnitNameHostileNPC"] = GetCVar("UnitNameHostileNPC"),
+	["UnitNameNPC"] = GetCVar("UnitNameNPC"),
+	["UnitNameNonCombatCreatureName"] = GetCVar("UnitNameNonCombatCreatureName"),
+
+	-- friendly players
+	["UnitNameFriendlyPlayerName"] = GetCVar("UnitNameFriendlyPlayerName"),
+	["UnitNameFriendlyPetName"] = GetCVar("UnitNameFriendlyPetName"),
+	["UnitNameFriendlyGuardianName"] = GetCVar("UnitNameFriendlyGuardianName"),
+	["UnitNameFriendlyTotemName"] = GetCVar("UnitNameFriendlyTotemName"),
+
+	-- enemy players
+	["UnitNameEnemyPlayerName"] = GetCVar("UnitNameEnemyPlayerName"),
+	["UnitNameEnemyPetName"] = GetCVar("UnitNameEnemyPetName"),
+	["UnitNameEnemyGuardianName"] = GetCVar("UnitNameEnemyGuardianName"),
+	["UnitNameEnemyTotemName"] = GetCVar("UnitNameEnemyTotemName"),
+
+	-- nameplates
+	["nameplateShowFriends"] = GetCVar("nameplateShowFriends"),
+	["nameplateShowEnemies"] = GetCVar("nameplateShowEnemies"),
+}
 
 
 --<< ================================================= >>--
@@ -47,11 +78,22 @@ function PimpMySelfie:UPDATE_OVERRIDE_ACTIONBAR()
 	end
 
 	if isTakingSelfie then
+		-- hide "screenshot taken" text
 		ActionStatus:UnregisterEvent("SCREENSHOT_SUCCEEDED")
 		ActionStatus:UnregisterEvent("SCREENSHOT_FAILED")
+
+		-- hide names and nameplates
+		for cVar, _ in pairs(cVars) do
+			cVars[cVar] = GetCVar(cVar)
+			SetCVar(cVar, 0)
+		end
 	else
 		ActionStatus:RegisterEvent("SCREENSHOT_SUCCEEDED")
 		ActionStatus:RegisterEvent("SCREENSHOT_FAILED")
+
+		for cVar, value in pairs(cVars) do
+			SetCVar(cVar, cVars[cVar])
+		end
 	end
 end
 
